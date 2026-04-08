@@ -18,6 +18,26 @@
         }
       }
     }
+
+    // Fetch real data from webhook server
+    async function updateDashboard() {
+      try {
+        const res = await fetch('https://webhook.denderson.ai/stats');
+        const data = await res.json();
+        
+        document.getElementById('stat-hoje').textContent = data.inbound || 0;
+        document.getElementById('stat-total').textContent = (data.inbound || 0) + (data.outbound || 0);
+        document.getElementById('stat-30d').textContent = data.inbound || 0;
+        document.getElementById('stat-7d').textContent = data.inbound || 0;
+        document.getElementById('stat-donut').textContent = data.contacts || 0;
+        
+        const taxa = data.outbound > 0 && data.inbound > 0 ? Math.round((data.outbound / data.inbound) * 100) : 0;
+        document.getElementById('stat-taxa').textContent = Math.min(taxa, 100) + '%';
+        document.getElementById('stat-aquecidas').textContent = data.contacts || 0;
+      } catch(e) { console.error('Dashboard fetch error:', e); }
+    }
+    updateDashboard();
+    setInterval(updateDashboard, 60000); // Update every minute
   </script>
   <style>
     * { font-family: 'Inter', sans-serif; }
@@ -211,7 +231,7 @@
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Hoje</span>
           </div>
-          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-3xl font-bold stat-number" id="stat-hoje">0</p>
           <p class="text-xs text-white/30 mt-1">abordagens</p>
         </div>
         <!-- Card 2 -->
@@ -222,7 +242,7 @@
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">7 dias</span>
           </div>
-          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-3xl font-bold stat-number" id="stat-7d">0</p>
           <p class="text-xs text-white/30 mt-1">abordagens</p>
         </div>
         <!-- Card 3 -->
@@ -233,7 +253,7 @@
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">30 dias</span>
           </div>
-          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-3xl font-bold stat-number" id="stat-30d">0</p>
           <p class="text-xs text-white/30 mt-1">abordagens</p>
         </div>
         <!-- Card 4 -->
@@ -244,7 +264,7 @@
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Total</span>
           </div>
-          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-3xl font-bold stat-number" id="stat-total">0</p>
           <p class="text-xs text-white/30 mt-1">abordagens</p>
         </div>
         <!-- Card 5 -->
@@ -255,7 +275,7 @@
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Tx Resposta</span>
           </div>
-          <p class="text-3xl font-bold stat-number">0%</p>
+          <p class="text-3xl font-bold stat-number" id="stat-taxa">0%</p>
           <p class="text-xs text-white/30 mt-1">taxa de resposta</p>
         </div>
         <!-- Card 6 -->
@@ -266,7 +286,7 @@
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Aquecidas</span>
           </div>
-          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-3xl font-bold stat-number" id="stat-aquecidas">0</p>
           <p class="text-xs text-white/30 mt-1">conversas</p>
         </div>
       </div>
@@ -390,7 +410,7 @@
               <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(245,158,11,0.15)" stroke-width="20" stroke-dasharray="37.7 339.1" stroke-dashoffset="-263.8" transform="rotate(-90 80 80)"/>
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span class="text-xl font-bold stat-number">0</span>
+              <span class="text-xl font-bold stat-number" id="stat-donut">0</span>
               <span class="text-[10px] text-white/30">total</span>
             </div>
           </div>
@@ -616,9 +636,31 @@
       document.getElementById('iconMoon').classList.add('hidden');
       document.getElementById('iconSun').classList.remove('hidden');
     }
+
+    // Fetch real data from webhook server
+    async function updateDashboard() {
+      try {
+        const res = await fetch('https://webhook.denderson.ai/stats');
+        const data = await res.json();
+        
+        document.getElementById('stat-hoje').textContent = data.inbound || 0;
+        document.getElementById('stat-total').textContent = (data.inbound || 0) + (data.outbound || 0);
+        document.getElementById('stat-30d').textContent = data.inbound || 0;
+        document.getElementById('stat-7d').textContent = data.inbound || 0;
+        document.getElementById('stat-donut').textContent = data.contacts || 0;
+        
+        const taxa = data.outbound > 0 && data.inbound > 0 ? Math.round((data.outbound / data.inbound) * 100) : 0;
+        document.getElementById('stat-taxa').textContent = Math.min(taxa, 100) + '%';
+        document.getElementById('stat-aquecidas').textContent = data.contacts || 0;
+      } catch(e) { console.error('Dashboard fetch error:', e); }
+    }
+    updateDashboard();
+    setInterval(updateDashboard, 60000); // Update every minute
   </script>
 </body>
 </html>
 <!-- bw-led-1775659570 -->
 <!-- theme-toggle-1775659834 -->
 <!-- cats-1775659984 -->
+<!-- cyan-1775660047 -->
+<!-- live-data-1775687422 -->
