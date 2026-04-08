@@ -12,8 +12,8 @@
         extend: {
           fontFamily: { inter: ['Inter', 'sans-serif'] },
           colors: {
-            dark: { 900: '#0a0a0f', 800: '#12121a', 700: '#1a1a25', 600: '#22222f' },
-            accent: { blue: '#3b82f6', purple: '#8b5cf6', cyan: '#06b6d4', pink: '#ec4899', green: '#10b981', orange: '#f59e0b' }
+            dark: { 900: '#000000', 800: '#0a0a0a', 700: '#111111', 600: '#1a1a1a' },
+            accent: { blue: '#ffffff', purple: '#cccccc', cyan: '#e0e0e0', pink: '#999999', green: '#ffffff', orange: '#bbbbbb' }
           }
         }
       }
@@ -21,18 +21,25 @@
   </script>
   <style>
     * { font-family: 'Inter', sans-serif; }
-    body { background: #0a0a0f; }
+    body { background: #000000; color: #ffffff; }
+    ::selection { background: rgba(255,255,255,0.2); }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+    /* LED border animation */
+    @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+    @keyframes led-rotate { to { --angle: 360deg; } }
+
     .glass {
       background: rgba(255,255,255,0.03);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
     }
     .glass-strong {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.04);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .gradient-border {
       position: relative;
@@ -43,11 +50,20 @@
       inset: 0;
       border-radius: inherit;
       padding: 1px;
-      background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(139,92,246,0.3), rgba(236,72,153,0.1));
+      background: conic-gradient(from var(--angle), #000, #fff, #888, #fff, #000);
+      animation: led-rotate 4s linear infinite;
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
+    }
+
+    /* LED ring for profile photo */
+    .profile-ring {
+      padding: 3px;
+      border-radius: 50%;
+      background: conic-gradient(from var(--angle), #000, #fff, #888, #fff, #000);
+      animation: led-rotate 3s linear infinite;
     }
     .verified-badge {
       display: inline-flex;
@@ -55,7 +71,7 @@
       justify-content: center;
       width: 18px;
       height: 18px;
-      background: #3b82f6;
+      background: #ffffff;
       border-radius: 50%;
       margin-left: 4px;
     }
@@ -92,8 +108,8 @@
     }
     .pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0a0a0f; }
-    ::-webkit-scrollbar-thumb { background: #22222f; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: #000000; }
+    ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
   </style>
 </head>
 <body class="min-h-screen text-white antialiased">
@@ -109,7 +125,7 @@
     <div class="flex items-center gap-4">
       <span class="text-xs text-white/40" id="currentDate"></span>
       <div class="w-2 h-2 rounded-full bg-green-400 pulse-slow"></div>
-      <span class="text-xs text-green-400/80">Live</span>
+      <span class="text-xs text-white/80">Live</span>
     </div>
   </header>
 
@@ -122,7 +138,7 @@
       <div class="lg:col-span-4 glass-strong rounded-2xl p-6 gradient-border card-hover">
         <div class="flex items-start gap-4">
           <div class="profile-ring flex-shrink-0">
-            <img src="denderson-premium.webp" alt="Denderson Rodrigues" class="w-20 h-20 rounded-full object-cover" />
+            <img src="denderson-profile.png" alt="Denderson Rodrigues" class="w-20 h-20 rounded-full object-cover" />
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1">
@@ -131,7 +147,7 @@
                 <svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
               </span>
             </div>
-            <p class="text-sm text-blue-400/80 font-medium">@denderson.ai</p>
+            <p class="text-sm text-white/80 font-medium">@denderson.ai</p>
           </div>
         </div>
         <p class="mt-4 text-sm text-white/50 leading-relaxed">A IA trabalha por mim e pode trabalhar por voce! Consultoria de implantacao de inteligencia artificial em todo ecossistema empresarial</p>
@@ -158,8 +174,8 @@
         <!-- Card 1 -->
         <div class="glass rounded-2xl p-5 gradient-border card-hover glow-blue">
           <div class="flex items-center gap-2 mb-3">
-            <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Hoje</span>
           </div>
@@ -169,8 +185,8 @@
         <!-- Card 2 -->
         <div class="glass rounded-2xl p-5 gradient-border card-hover glow-purple">
           <div class="flex items-center gap-2 mb-3">
-            <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
-              <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div class="w-8 h-8 rounded-lg bg-gray-300/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">7 dias</span>
           </div>
@@ -181,7 +197,7 @@
         <div class="glass rounded-2xl p-5 gradient-border card-hover glow-cyan">
           <div class="flex items-center gap-2 mb-3">
             <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              <svg class="w-4 h-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">30 dias</span>
           </div>
@@ -191,8 +207,8 @@
         <!-- Card 4 -->
         <div class="glass rounded-2xl p-5 gradient-border card-hover">
           <div class="flex items-center gap-2 mb-3">
-            <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Total</span>
           </div>
@@ -203,7 +219,7 @@
         <div class="glass rounded-2xl p-5 gradient-border card-hover">
           <div class="flex items-center gap-2 mb-3">
             <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center">
-              <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Tx Resposta</span>
           </div>
@@ -214,7 +230,7 @@
         <div class="glass rounded-2xl p-5 gradient-border card-hover">
           <div class="flex items-center gap-2 mb-3">
             <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
-              <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
+              <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
             </div>
             <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Aquecidas</span>
           </div>
@@ -228,7 +244,7 @@
     <div class="glass-strong rounded-2xl p-6 gradient-border">
       <div class="flex items-center gap-3 mb-6">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-          <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
         </div>
         <h3 class="text-base font-semibold">Funil de Prospeccao</h3>
       </div>
@@ -289,7 +305,7 @@
     <div class="glass-strong rounded-2xl p-6 gradient-border">
       <div class="flex items-center gap-3 mb-6">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
-          <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <svg class="w-4 h-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
         </div>
         <h3 class="text-base font-semibold">Ultimas Abordagens</h3>
       </div>
@@ -326,7 +342,7 @@
       <div class="glass-strong rounded-2xl p-6 gradient-border">
         <div class="flex items-center gap-3 mb-6">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center">
-            <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
           </div>
           <h3 class="text-sm font-semibold">Perfil que Mais Respondeu</h3>
         </div>
@@ -349,11 +365,11 @@
         </div>
         <div class="space-y-2">
           <div class="flex items-center justify-between text-xs">
-            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-blue-500/40"></div><span class="text-white/40">Coach/Mentor</span></div>
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-white/40"></div><span class="text-white/40">Coach/Mentor</span></div>
             <span class="text-white/30">0%</span>
           </div>
           <div class="flex items-center justify-between text-xs">
-            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-purple-500/40"></div><span class="text-white/40">E-commerce</span></div>
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-gray-300/40"></div><span class="text-white/40">E-commerce</span></div>
             <span class="text-white/30">0%</span>
           </div>
           <div class="flex items-center justify-between text-xs">
@@ -375,7 +391,7 @@
       <div class="glass-strong rounded-2xl p-6 gradient-border">
         <div class="flex items-center gap-3 mb-6">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-cyan-500/20 flex items-center justify-center">
-            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <h3 class="text-sm font-semibold">Melhores Horarios</h3>
         </div>
@@ -479,10 +495,10 @@
           <span class="text-[10px] text-white/20">Menos</span>
           <div class="flex gap-1">
             <div class="w-4 h-4 rounded bg-white/[0.02]"></div>
-            <div class="w-4 h-4 rounded bg-green-500/10"></div>
-            <div class="w-4 h-4 rounded bg-green-500/20"></div>
-            <div class="w-4 h-4 rounded bg-green-500/40"></div>
-            <div class="w-4 h-4 rounded bg-green-500/60"></div>
+            <div class="w-4 h-4 rounded bg-white/10"></div>
+            <div class="w-4 h-4 rounded bg-white/20"></div>
+            <div class="w-4 h-4 rounded bg-white/40"></div>
+            <div class="w-4 h-4 rounded bg-white/60"></div>
           </div>
           <span class="text-[10px] text-white/20">Mais</span>
         </div>
@@ -492,21 +508,21 @@
       <div class="glass-strong rounded-2xl p-6 gradient-border">
         <div class="flex items-center gap-3 mb-6">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/20 to-pink-500/20 flex items-center justify-center">
-            <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
           </div>
           <h3 class="text-sm font-semibold">Historico Semanal</h3>
         </div>
         <div class="flex items-center gap-2 mb-4">
-          <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-blue-500/50"></div><span class="text-[10px] text-white/30">Abordagens</span></div>
-          <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div><span class="text-[10px] text-white/30">Respostas</span></div>
+          <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-white/50"></div><span class="text-[10px] text-white/30">Abordagens</span></div>
+          <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-white/50"></div><span class="text-[10px] text-white/30">Respostas</span></div>
         </div>
         <!-- Bar chart -->
         <div class="flex items-end gap-3 h-48">
           <!-- Semana 1 -->
           <div class="flex-1 flex flex-col items-center gap-1">
             <div class="w-full flex gap-1 items-end justify-center h-40">
-              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
-              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
             </div>
             <span class="text-[10px] text-white/20">Sem 1</span>
             <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
@@ -514,8 +530,8 @@
           <!-- Semana 2 -->
           <div class="flex-1 flex flex-col items-center gap-1">
             <div class="w-full flex gap-1 items-end justify-center h-40">
-              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
-              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
             </div>
             <span class="text-[10px] text-white/20">Sem 2</span>
             <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
@@ -523,8 +539,8 @@
           <!-- Semana 3 -->
           <div class="flex-1 flex flex-col items-center gap-1">
             <div class="w-full flex gap-1 items-end justify-center h-40">
-              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
-              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
             </div>
             <span class="text-[10px] text-white/20">Sem 3</span>
             <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
@@ -532,8 +548,8 @@
           <!-- Semana 4 -->
           <div class="flex-1 flex flex-col items-center gap-1">
             <div class="w-full flex gap-1 items-end justify-center h-40">
-              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
-              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-white/15 min-h-[4px]" style="height: 4px"></div>
             </div>
             <span class="text-[10px] text-white/20">Sem 4</span>
             <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
