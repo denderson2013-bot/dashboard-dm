@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Selling Dashboard | Denderson Rodrigues</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { inter: ['Inter', 'sans-serif'] },
+          colors: {
+            dark: { 900: '#0a0a0f', 800: '#12121a', 700: '#1a1a25', 600: '#22222f' },
+            accent: { blue: '#3b82f6', purple: '#8b5cf6', cyan: '#06b6d4', pink: '#ec4899', green: '#10b981', orange: '#f59e0b' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #0a0a0f; }
+    .glass {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .glass-strong {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .gradient-border {
+      position: relative;
+    }
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(139,92,246,0.3), rgba(236,72,153,0.1));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: #3b82f6;
+      border-radius: 50%;
+      margin-left: 4px;
+    }
+    .verified-badge svg { width: 11px; height: 11px; }
+    .profile-ring {
+      background: linear-gradient(135deg, #8b5cf6, #3b82f6, #06b6d4);
+      padding: 3px;
+      border-radius: 50%;
+    }
+    .funnel-bar {
+      transition: width 0.8s ease;
+    }
+    .heatmap-cell {
+      transition: background 0.3s ease;
+    }
+    .card-hover {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.1);
+    }
+    .glow-blue { box-shadow: 0 0 40px rgba(59,130,246,0.08); }
+    .glow-purple { box-shadow: 0 0 40px rgba(139,92,246,0.08); }
+    .glow-cyan { box-shadow: 0 0 40px rgba(6,182,212,0.08); }
+    .stat-number {
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #22222f; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen text-white antialiased">
+
+  <!-- Header -->
+  <header class="glass sticky top-0 z-50 px-6 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <span class="text-sm font-semibold text-white/80">Social Selling Dashboard</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-xs text-white/40" id="currentDate"></span>
+      <div class="w-2 h-2 rounded-full bg-green-400 pulse-slow"></div>
+      <span class="text-xs text-green-400/80">Live</span>
+    </div>
+  </header>
+
+  <main class="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- Top Section: Profile + Metric Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Profile Card -->
+      <div class="lg:col-span-4 glass-strong rounded-2xl p-6 gradient-border card-hover">
+        <div class="flex items-start gap-4">
+          <div class="profile-ring flex-shrink-0">
+            <img src="denderson-premium.webp" alt="Denderson Rodrigues" class="w-20 h-20 rounded-full object-cover" />
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1">
+              <h2 class="text-lg font-bold truncate">Denderson Rodrigues</h2>
+              <span class="verified-badge flex-shrink-0">
+                <svg viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              </span>
+            </div>
+            <p class="text-sm text-blue-400/80 font-medium">@denderson.ai</p>
+          </div>
+        </div>
+        <p class="mt-4 text-sm text-white/50 leading-relaxed">A IA trabalha por mim e pode trabalhar por voce! Consultoria de implantacao de inteligencia artificial em todo ecossistema empresarial</p>
+        <div class="mt-5 flex items-center justify-between text-center">
+          <div>
+            <p class="text-base font-bold stat-number">2.433</p>
+            <p class="text-[11px] text-white/30 mt-0.5">posts</p>
+          </div>
+          <div class="w-px h-8 bg-white/5"></div>
+          <div>
+            <p class="text-base font-bold stat-number">231K</p>
+            <p class="text-[11px] text-white/30 mt-0.5">followers</p>
+          </div>
+          <div class="w-px h-8 bg-white/5"></div>
+          <div>
+            <p class="text-base font-bold stat-number">1.949</p>
+            <p class="text-[11px] text-white/30 mt-0.5">following</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric Cards Grid -->
+      <div class="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <!-- Card 1 -->
+        <div class="glass rounded-2xl p-5 gradient-border card-hover glow-blue">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            </div>
+            <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Hoje</span>
+          </div>
+          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-xs text-white/30 mt-1">abordagens</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="glass rounded-2xl p-5 gradient-border card-hover glow-purple">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">7 dias</span>
+          </div>
+          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-xs text-white/30 mt-1">abordagens</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="glass rounded-2xl p-5 gradient-border card-hover glow-cyan">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">30 dias</span>
+          </div>
+          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-xs text-white/30 mt-1">abordagens</p>
+        </div>
+        <!-- Card 4 -->
+        <div class="glass rounded-2xl p-5 gradient-border card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Total</span>
+          </div>
+          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-xs text-white/30 mt-1">abordagens</p>
+        </div>
+        <!-- Card 5 -->
+        <div class="glass rounded-2xl p-5 gradient-border card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Tx Resposta</span>
+          </div>
+          <p class="text-3xl font-bold stat-number">0%</p>
+          <p class="text-xs text-white/30 mt-1">taxa de resposta</p>
+        </div>
+        <!-- Card 6 -->
+        <div class="glass rounded-2xl p-5 gradient-border card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+              <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
+            </div>
+            <span class="text-[11px] text-white/40 font-medium uppercase tracking-wider">Aquecidas</span>
+          </div>
+          <p class="text-3xl font-bold stat-number">0</p>
+          <p class="text-xs text-white/30 mt-1">conversas</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Funnel Section -->
+    <div class="glass-strong rounded-2xl p-6 gradient-border">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+        </div>
+        <h3 class="text-base font-semibold">Funil de Prospeccao</h3>
+      </div>
+      <div class="space-y-3">
+        <!-- Funnel rows -->
+        <div class="flex items-center gap-4">
+          <span class="text-xs text-white/40 w-28 text-right">Analisados</span>
+          <div class="flex-1 h-9 bg-white/[0.02] rounded-lg overflow-hidden relative">
+            <div class="funnel-bar h-full rounded-lg bg-gradient-to-r from-blue-500/30 to-blue-500/10" style="width: 0%"></div>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/50">0</span>
+          </div>
+          <span class="text-xs text-white/30 w-12 text-right">0%</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-xs text-white/40 w-28 text-right">Qualificados</span>
+          <div class="flex-1 h-9 bg-white/[0.02] rounded-lg overflow-hidden relative">
+            <div class="funnel-bar h-full rounded-lg bg-gradient-to-r from-purple-500/30 to-purple-500/10" style="width: 0%"></div>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/50">0</span>
+          </div>
+          <span class="text-xs text-white/30 w-12 text-right">0%</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-xs text-white/40 w-28 text-right">Abordados</span>
+          <div class="flex-1 h-9 bg-white/[0.02] rounded-lg overflow-hidden relative">
+            <div class="funnel-bar h-full rounded-lg bg-gradient-to-r from-cyan-500/30 to-cyan-500/10" style="width: 0%"></div>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/50">0</span>
+          </div>
+          <span class="text-xs text-white/30 w-12 text-right">0%</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-xs text-white/40 w-28 text-right">Responderam</span>
+          <div class="flex-1 h-9 bg-white/[0.02] rounded-lg overflow-hidden relative">
+            <div class="funnel-bar h-full rounded-lg bg-gradient-to-r from-green-500/30 to-green-500/10" style="width: 0%"></div>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/50">0</span>
+          </div>
+          <span class="text-xs text-white/30 w-12 text-right">0%</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-xs text-white/40 w-28 text-right">Interesse</span>
+          <div class="flex-1 h-9 bg-white/[0.02] rounded-lg overflow-hidden relative">
+            <div class="funnel-bar h-full rounded-lg bg-gradient-to-r from-pink-500/30 to-pink-500/10" style="width: 0%"></div>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/50">0</span>
+          </div>
+          <span class="text-xs text-white/30 w-12 text-right">0%</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-xs text-white/40 w-28 text-right">Passados ao Chefe</span>
+          <div class="flex-1 h-9 bg-white/[0.02] rounded-lg overflow-hidden relative">
+            <div class="funnel-bar h-full rounded-lg bg-gradient-to-r from-orange-500/30 to-orange-500/10" style="width: 0%"></div>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/50">0</span>
+          </div>
+          <span class="text-xs text-white/30 w-12 text-right">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table: Ultimas Abordagens -->
+    <div class="glass-strong rounded-2xl p-6 gradient-border">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+        <h3 class="text-base font-semibold">Ultimas Abordagens</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/5">
+              <th class="text-left py-3 px-4 text-[11px] text-white/30 font-medium uppercase tracking-wider">Data</th>
+              <th class="text-left py-3 px-4 text-[11px] text-white/30 font-medium uppercase tracking-wider">Perfil</th>
+              <th class="text-left py-3 px-4 text-[11px] text-white/30 font-medium uppercase tracking-wider">Nome</th>
+              <th class="text-left py-3 px-4 text-[11px] text-white/30 font-medium uppercase tracking-wider">Nicho</th>
+              <th class="text-left py-3 px-4 text-[11px] text-white/30 font-medium uppercase tracking-wider">Status</th>
+              <th class="text-left py-3 px-4 text-[11px] text-white/30 font-medium uppercase tracking-wider">Acao</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr>
+              <td colspan="6" class="text-center py-12 text-white/20 text-sm">
+                <div class="flex flex-col items-center gap-3">
+                  <svg class="w-10 h-10 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                  <span>Nenhuma abordagem ainda</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bottom Grid: Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Tipo de Perfil -->
+      <div class="glass-strong rounded-2xl p-6 gradient-border">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center">
+            <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+          </div>
+          <h3 class="text-sm font-semibold">Perfil que Mais Respondeu</h3>
+        </div>
+        <!-- Donut Chart SVG -->
+        <div class="flex justify-center mb-5">
+          <div class="relative">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="20"/>
+              <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(59,130,246,0.15)" stroke-width="20" stroke-dasharray="94.2 282.6" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+              <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(139,92,246,0.15)" stroke-width="20" stroke-dasharray="75.4 301.4" stroke-dashoffset="-94.2" transform="rotate(-90 80 80)"/>
+              <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(236,72,153,0.15)" stroke-width="20" stroke-dasharray="56.5 320.3" stroke-dashoffset="-169.6" transform="rotate(-90 80 80)"/>
+              <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(6,182,212,0.15)" stroke-width="20" stroke-dasharray="37.7 339.1" stroke-dashoffset="-226.1" transform="rotate(-90 80 80)"/>
+              <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(245,158,11,0.15)" stroke-width="20" stroke-dasharray="37.7 339.1" stroke-dashoffset="-263.8" transform="rotate(-90 80 80)"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-xl font-bold stat-number">0</span>
+              <span class="text-[10px] text-white/30">total</span>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-blue-500/40"></div><span class="text-white/40">Coach/Mentor</span></div>
+            <span class="text-white/30">0%</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-purple-500/40"></div><span class="text-white/40">E-commerce</span></div>
+            <span class="text-white/30">0%</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-pink-500/40"></div><span class="text-white/40">Agencia</span></div>
+            <span class="text-white/30">0%</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-cyan-500/40"></div><span class="text-white/40">SaaS/Tech</span></div>
+            <span class="text-white/30">0%</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-orange-500/40"></div><span class="text-white/40">Outros</span></div>
+            <span class="text-white/30">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Melhores Horarios -->
+      <div class="glass-strong rounded-2xl p-6 gradient-border">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-cyan-500/20 flex items-center justify-center">
+            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-sm font-semibold">Melhores Horarios</h3>
+        </div>
+        <div class="grid grid-cols-5 gap-1.5">
+          <!-- Header row -->
+          <div class="text-[10px] text-white/20 text-center"></div>
+          <div class="text-[10px] text-white/20 text-center">Seg</div>
+          <div class="text-[10px] text-white/20 text-center">Ter</div>
+          <div class="text-[10px] text-white/20 text-center">Qua</div>
+          <div class="text-[10px] text-white/20 text-center">Qui</div>
+          <!-- 9h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">9h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 10h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">10h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 11h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">11h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 12h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">12h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 13h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">13h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 14h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">14h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 15h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">15h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 16h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">16h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 17h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">17h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <!-- 18h -->
+          <div class="text-[10px] text-white/20 text-right pr-1">18h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+        </div>
+        <!-- Heatmap continue with Sex -->
+        <div class="grid grid-cols-5 gap-1.5 mt-3">
+          <div class="text-[10px] text-white/20 text-center"></div>
+          <div class="text-[10px] text-white/20 text-center">Sex</div>
+          <div class="text-[10px] text-white/20 text-center">Sab</div>
+          <div class="text-[10px] text-white/20 text-center">Dom</div>
+          <div class="text-[10px] text-white/20 text-center"></div>
+          <div class="text-[10px] text-white/20 text-right pr-1">9h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div></div>
+          <div class="text-[10px] text-white/20 text-right pr-1">12h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div></div>
+          <div class="text-[10px] text-white/20 text-right pr-1">15h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div></div>
+          <div class="text-[10px] text-white/20 text-right pr-1">18h</div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div class="heatmap-cell h-7 rounded bg-white/[0.02]"></div>
+          <div></div>
+        </div>
+        <div class="flex items-center justify-between mt-4">
+          <span class="text-[10px] text-white/20">Menos</span>
+          <div class="flex gap-1">
+            <div class="w-4 h-4 rounded bg-white/[0.02]"></div>
+            <div class="w-4 h-4 rounded bg-green-500/10"></div>
+            <div class="w-4 h-4 rounded bg-green-500/20"></div>
+            <div class="w-4 h-4 rounded bg-green-500/40"></div>
+            <div class="w-4 h-4 rounded bg-green-500/60"></div>
+          </div>
+          <span class="text-[10px] text-white/20">Mais</span>
+        </div>
+      </div>
+
+      <!-- Historico Semanal -->
+      <div class="glass-strong rounded-2xl p-6 gradient-border">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/20 to-pink-500/20 flex items-center justify-center">
+            <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="text-sm font-semibold">Historico Semanal</h3>
+        </div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-blue-500/50"></div><span class="text-[10px] text-white/30">Abordagens</span></div>
+          <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div><span class="text-[10px] text-white/30">Respostas</span></div>
+        </div>
+        <!-- Bar chart -->
+        <div class="flex items-end gap-3 h-48">
+          <!-- Semana 1 -->
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full flex gap-1 items-end justify-center h-40">
+              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+            </div>
+            <span class="text-[10px] text-white/20">Sem 1</span>
+            <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
+          </div>
+          <!-- Semana 2 -->
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full flex gap-1 items-end justify-center h-40">
+              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+            </div>
+            <span class="text-[10px] text-white/20">Sem 2</span>
+            <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
+          </div>
+          <!-- Semana 3 -->
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full flex gap-1 items-end justify-center h-40">
+              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+            </div>
+            <span class="text-[10px] text-white/20">Sem 3</span>
+            <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
+          </div>
+          <!-- Semana 4 -->
+          <div class="flex-1 flex flex-col items-center gap-1">
+            <div class="w-full flex gap-1 items-end justify-center h-40">
+              <div class="w-5 rounded-t bg-blue-500/15 min-h-[4px]" style="height: 4px"></div>
+              <div class="w-5 rounded-t bg-green-500/15 min-h-[4px]" style="height: 4px"></div>
+            </div>
+            <span class="text-[10px] text-white/20">Sem 4</span>
+            <span class="text-[10px] text-white/30 font-medium">0 / 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center py-4">
+      <p class="text-[11px] text-white/15">Social Selling Dashboard &middot; Powered by Naia AI &middot; denderson.ai</p>
+    </div>
+  </main>
+
+  <script>
+    // Set current date
+    const d = new Date();
+    const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDate').textContent = d.toLocaleDateString('pt-BR', opts);
+  </script>
+</body>
+</html>
