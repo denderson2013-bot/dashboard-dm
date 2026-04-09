@@ -24,20 +24,30 @@
       try {
         const res = await fetch('https://webhook.denderson.ai/stats');
         const data = await res.json();
-        
-        document.getElementById('stat-hoje').textContent = data.inbound || 0;
+
+        document.getElementById('stat-hoje').textContent = data.hoje || 0;
         document.getElementById('stat-total').textContent = (data.inbound || 0) + (data.outbound || 0);
-        document.getElementById('stat-30d').textContent = data.inbound || 0;
-        document.getElementById('stat-7d').textContent = data.inbound || 0;
+        document.getElementById('stat-30d').textContent = data.d30 || data.inbound || 0;
+        document.getElementById('stat-7d').textContent = data.d7 || data.inbound || 0;
         document.getElementById('stat-donut').textContent = data.contacts || 0;
-        
+
         const taxa = data.outbound > 0 && data.inbound > 0 ? Math.round((data.outbound / data.inbound) * 100) : 0;
         document.getElementById('stat-taxa').textContent = Math.min(taxa, 100) + '%';
-        document.getElementById('stat-aquecidas').textContent = data.contacts || 0;
+        document.getElementById('stat-aquecidas').textContent = data.responderam || data.contacts || 0;
+
+        const tbody = document.getElementById('tableBody');
+        if (tbody && data.recent && data.recent.length > 0) {
+          tbody.innerHTML = data.recent.map(r => `<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+            <td style="padding:10px 12px;color:rgba(255,255,255,0.8)">${r.name || '?'}</td>
+            <td style="padding:10px 12px;color:rgba(255,255,255,0.5);font-size:12px">${r.message || ''}</td>
+            <td style="padding:10px 12px;color:rgba(34,211,238,0.7);font-size:11px;white-space:nowrap">${r.ts ? new Date(r.ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : ''}</td>
+            <td style="padding:10px 12px"><span style="padding:2px 8px;border-radius:4px;font-size:11px;background:${r.direction==='inbound'?'rgba(34,211,238,0.15);color:#22d3ee':'rgba(220,38,38,0.15);color:#f87171'}">${r.direction==='inbound'?'Recebida':'Enviada'}</span></td>
+          </tr>`).join('');
+        }
       } catch(e) { console.error('Dashboard fetch error:', e); }
     }
     updateDashboard();
-    setInterval(updateDashboard, 60000); // Update every minute
+    setInterval(updateDashboard, 30000);
   </script>
   <style>
     * { font-family: 'Inter', sans-serif; }
@@ -642,20 +652,30 @@
       try {
         const res = await fetch('https://webhook.denderson.ai/stats');
         const data = await res.json();
-        
-        document.getElementById('stat-hoje').textContent = data.inbound || 0;
+
+        document.getElementById('stat-hoje').textContent = data.hoje || 0;
         document.getElementById('stat-total').textContent = (data.inbound || 0) + (data.outbound || 0);
-        document.getElementById('stat-30d').textContent = data.inbound || 0;
-        document.getElementById('stat-7d').textContent = data.inbound || 0;
+        document.getElementById('stat-30d').textContent = data.d30 || data.inbound || 0;
+        document.getElementById('stat-7d').textContent = data.d7 || data.inbound || 0;
         document.getElementById('stat-donut').textContent = data.contacts || 0;
-        
+
         const taxa = data.outbound > 0 && data.inbound > 0 ? Math.round((data.outbound / data.inbound) * 100) : 0;
         document.getElementById('stat-taxa').textContent = Math.min(taxa, 100) + '%';
-        document.getElementById('stat-aquecidas').textContent = data.contacts || 0;
+        document.getElementById('stat-aquecidas').textContent = data.responderam || data.contacts || 0;
+
+        const tbody = document.getElementById('tableBody');
+        if (tbody && data.recent && data.recent.length > 0) {
+          tbody.innerHTML = data.recent.map(r => `<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+            <td style="padding:10px 12px;color:rgba(255,255,255,0.8)">${r.name || '?'}</td>
+            <td style="padding:10px 12px;color:rgba(255,255,255,0.5);font-size:12px">${r.message || ''}</td>
+            <td style="padding:10px 12px;color:rgba(34,211,238,0.7);font-size:11px;white-space:nowrap">${r.ts ? new Date(r.ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : ''}</td>
+            <td style="padding:10px 12px"><span style="padding:2px 8px;border-radius:4px;font-size:11px;background:${r.direction==='inbound'?'rgba(34,211,238,0.15);color:#22d3ee':'rgba(220,38,38,0.15);color:#f87171'}">${r.direction==='inbound'?'Recebida':'Enviada'}</span></td>
+          </tr>`).join('');
+        }
       } catch(e) { console.error('Dashboard fetch error:', e); }
     }
     updateDashboard();
-    setInterval(updateDashboard, 60000); // Update every minute
+    setInterval(updateDashboard, 30000);
   </script>
 </body>
 </html>
